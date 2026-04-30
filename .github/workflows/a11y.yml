@@ -1,23 +1,22 @@
-name: Ask Copilot for accessibility review
+name: Leave PR Comment
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
-
-permissions:
-  contents: read
-  pull-requests: write
-  issues: write
+    types: [opened, synchronize] # Triggers when a PR is opened or new commits are pushed
 
 jobs:
-  ask-copilot:
+  comment:
     runs-on: ubuntu-latest
+    
+    # Explicitly grant permission to write to pull requests
+    permissions:
+      pull-requests: write 
 
     steps:
-      - name: Ask Copilot to use the skill
-        run: |
-          gh pr comment "${{ github.event.pull_request.number }}" \
-            --repo "${{ github.repository }}" \
-            --body "@copilot please review this PR using the a11y-review skill from this repository. Focus on semantic HTML, ARIA misuse, keyboard navigation, focus states, heading structure, and axe-core issues. Suggest concrete JSX/HTML fixes."
+      - name: Post comment using GitHub CLI
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # The built-in token needed to authenticate the CLI
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} \
+            --body "👋 **@copilot Use the a11y-review skill to analyze the errors listed in the .json file."
