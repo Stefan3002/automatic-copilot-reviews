@@ -1,22 +1,25 @@
 name: Leave PR Comment
 
+# This ensures it runs when a PR is opened or updated
 on:
   pull_request:
-    types: [opened, synchronize] # Triggers when a PR is opened or new commits are pushed
+    types: [opened, synchronize]
 
 jobs:
   comment:
     runs-on: ubuntu-latest
     
-    # Explicitly grant permission to write to pull requests
+    # 🚨 CRITICAL: Gives the action permission to leave a comment
     permissions:
       pull-requests: write 
 
     steps:
       - name: Post comment using GitHub CLI
+        # 🚨 CRITICAL: Hands the CLI the keys to your repo
         env:
-          # The built-in token needed to authenticate the CLI
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        # 🚨 CRITICAL: Uses dynamic variables for the PR number and Repo name
         run: |
           gh pr comment ${{ github.event.pull_request.number }} \
-            --body "👋 **@copilot Use the a11y-review skill to analyze the errors listed in the .json file."
+            --repo ${{ github.repository }} \
+            --body "👋 **Success!** The action successfully commented on the right PR."
