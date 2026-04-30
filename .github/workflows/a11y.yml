@@ -1,6 +1,5 @@
 name: Leave PR Comment
 
-# This ensures it runs when a PR is opened or updated
 on:
   pull_request:
     types: [opened, synchronize]
@@ -9,17 +8,19 @@ jobs:
   comment:
     runs-on: ubuntu-latest
     
-    # 🚨 CRITICAL: Gives the action permission to leave a comment
     permissions:
       pull-requests: write 
 
     steps:
+      # 🚨 THIS IS THE MISSING PIECE 🚨
+      # This step downloads your code and the .git folder to the virtual machine
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Now the gh CLI will work perfectly because the .git folder exists
       - name: Post comment using GitHub CLI
-        # 🚨 CRITICAL: Hands the CLI the keys to your repo
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        # 🚨 CRITICAL: Uses dynamic variables for the PR number and Repo name
         run: |
           gh pr comment ${{ github.event.pull_request.number }} \
-            --repo ${{ github.repository }} \
-            --body "👋 **Success!** The action successfully commented on the right PR."
+            --body "👋 **Success!** The action finally works!"
