@@ -12,15 +12,12 @@ jobs:
       pull-requests: write 
 
     steps:
-      # 🚨 THIS IS THE MISSING PIECE 🚨
-      # This step downloads your code and the .git folder to the virtual machine
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Now the gh CLI will work perfectly because the .git folder exists
       - name: Post comment using GitHub CLI
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh pr comment ${{ github.event.pull_request.number }} \
-            --body "👋 **Success!** The action finally works!"
+            --body "@copilot Use the a11y-review skill and analyze the .json file"
